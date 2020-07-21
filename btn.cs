@@ -17,8 +17,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.mainRect.x + 5, Main.mainRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
-
             }
             else if (buttonType.Equals("stats"))
             {
@@ -29,9 +27,8 @@ namespace UmbraRoR
                 }
                 else
                 {
-                    return new Rect(Main.statRect.x + 5, Main.statRect.y + 5 + 45 * y, Main.widthSize - 150, 40);
+                    return new Rect(Main.statRect.x + 5, Main.statRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("tele"))
             {
@@ -44,7 +41,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.teleRect.x + 5, Main.teleRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("ESP"))
             {
@@ -57,7 +53,19 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.ESPRect.x + 5, Main.ESPRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
+            }
+            else if (buttonType.Equals("spawn"))
+            {
+                Main.spawnMulY = y;
+                Main.spawnBtnY = 5 + 45 * y;
+                if (isMultButton)
+                {
+                    return new Rect(Main.spawnRect.x + 5, Main.spawnRect.y + 5 + 45 * y, Main.widthSize - 90, 40);
+                }
+                else
+                {
+                    return new Rect(Main.spawnRect.x + 5, Main.spawnRect.y + 5 + 45 * y, Main.widthSize, 40);
+                }
             }
             else if (buttonType.Equals("itemSpawner"))
             {
@@ -82,7 +90,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.equipmentSpawnerRect.x + 5, Main.equipmentSpawnerRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("giveBuff"))
             {
@@ -95,7 +102,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.buffMenuRect.x + 5, Main.buffMenuRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("character"))
             {
@@ -108,7 +114,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.characterRect.x + 5, Main.characterRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("lobby"))
             {
@@ -121,7 +126,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.lobbyRect.x + 5, Main.lobbyRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("playermod"))
             {
@@ -135,7 +139,6 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.playerModRect.x + 5, Main.playerModRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
             else if (buttonType.Equals("itemmanager"))
             {
@@ -149,12 +152,47 @@ namespace UmbraRoR
                 {
                     return new Rect(Main.itemManagerRect.x + 5, Main.itemManagerRect.y + 5 + 45 * y, Main.widthSize, 40);
                 }
-
             }
-
+            else if (buttonType.Equals("statsmod"))
+            {
+                Main.editStatsMulY = y;
+                Main.editStatsBtnY = 5 + 45 * y;
+                if (isMultButton)
+                {
+                    return new Rect(Main.editStatsRect.x + 5, Main.editStatsRect.y + 5 + 45 * y, Main.widthSize - 90, 40);
+                }
+                else
+                {
+                    return new Rect(Main.editStatsRect.x + 5, Main.editStatsRect.y + 5 + 45 * y, Main.widthSize, 40);
+                }
+            }
+            else if (buttonType.Equals("movement"))
+            {
+                Main.movementMulY = y;
+                if (isMultButton)
+                {
+                    return new Rect(Main.movementRect.x + 5, Main.movementRect.y + 5 + 45 * y, Main.widthSize - 90, 40);
+                }
+                else
+                {
+                    return new Rect(Main.movementRect.x + 5, Main.movementRect.y + 5 + 45 * y, Main.widthSize, 40);
+                }
+            }
+            else if (buttonType.Equals("spawnMob"))
+            {
+                Main.spawnListMulY = y;
+                if (isMultButton)
+                {
+                    return new Rect(Main.spawnListRect.x + 5, Main.spawnListRect.y + 5 + 45 * y, Main.widthSize - 90, 40);
+                }
+                else
+                {
+                    return new Rect(Main.spawnListRect.x + 5, Main.spawnListRect.y + 5 + 45 * y, Main.widthSize, 40);
+                }
+            }
             else
             {
-                return new Rect(Main.itemSpawnerRect.x + 5, Main.itemSpawnerRect.y + 5 + 45 * y, Main.widthSize, 40);
+                return new Rect(Main.mainRect.x + 5, Main.mainRect.y + 5 + 45 * y, Main.widthSize - 90, 40);
             }
         }
     }
