@@ -155,6 +155,19 @@ pause
 
 
 # Changelog:
+### 8/5/2020 v1.2.6:
+- [ ] Added a box around mobs for Render Mobs.
+- [ ] Added the ability to despawn spawned interactables.
+- [ ] Improved Kill All. Now kills mobs spawned on the players team.
+- [ ] Improved Show Stats Menu Style.
+- [ ] Improved how the menu gets the local player.
+- [ ] Fixed a bug allowing navigation to be enabled in the main menu.
+- [ ] Added some comments to my source code.
+- [ ] Made a wrapper method for drawing buttons.
+- [ ] Bunch of code formatting/organization/refactoring.
+- [ ] Various other minor improvements.
+
+
 ### 7/20/2020 v1.2.5:
 - [ ] Added JumpPack.
 - [ ] Added the ability to Spawn Interactables and Mobs.
@@ -162,8 +175,8 @@ pause
 - [ ] Moved Movement mods to their own menu/file.
 - [ ] Moved Stats Modifications/Menu to their own menu.
 - [ ] Made the menu slightly more transparent and smaller.
-- [ ] Fixed View Stats Menu styling
-- [ ] Some code cleanup
+- [ ] Fixed View Stats Menu styling.
+- [ ] Some code cleanup.
 
 
 ### 7/11/2020 v1.2.4:
@@ -178,7 +191,7 @@ pause
 - [ ] Fixed a bug that sometimes caused mob & interactable ESP to conflict.
 - [ ] Fixed a bug causing Always Sprint & Flight to conflict.
 - [ ] Fixed a bug causing Stats Menu & drag location to reset when insert was pressed while Navigation was toggled.
-- [ ] Some code cleanup
+- [ ] Some code cleanup.
 
 
 ### 7/9/2020 v1.2.3:
@@ -188,28 +201,32 @@ pause
 - [ ] Made the menu more compact.
 - [ ] Refactored a few things.
 
+
 ### 7/3/2020 v1.2.2:
-- [ ] Menu now `checks for updates` on inject and will tell you if its outdated
-- [ ] Added ability to disable keyboard navigation if `Backspace` or `Left Arrow` is pressed in the main menu
-- [ ] Improved Flight
- - Can now press `X` to fly down
- - No longer take fall damage while flight is enabled
-- [ ] Improved Roll Item
- - Added Lunar and Boss items to loot pool
- - No longer uses a depricated method
-- [ ] Refactored a few things
+- [ ] Menu now `checks for updates` on inject and will tell you if its outdated.
+- [ ] Added ability to disable keyboard navigation if `Backspace` or `Left Arrow` is pressed in the main menu.
+- [ ] Improved Flight:
+ - Can now press `X` to fly down.
+ - No longer take fall damage while flight is enabled.
+- [ ] Improved Roll Item:
+ - Added Lunar and Boss items to loot pool.
+ - No longer uses a depricated method.
+- [ ] Refactored a few things.
+ 
  
 ### 6/26/2020 v1.2.1:
- - [ ] Added the ability to navigate the menu with a keyboard
- - [ ] Added the ability to drop items from your inventory
+ - [ ] Added the ability to navigate the menu with a keyboard.
+ - [ ] Added the ability to drop items from your inventory.
+ 
  
 ### 4/26/2020 v1.2:
- - [ ] Fixed Equipment not dropping sometimes
- - [ ] Reorganized code
- - [ ] Added comments to code
+ - [ ] Fixed Equipment not dropping sometimes.
+ - [ ] Reorganized code.
+ - [ ] Added comments to code.
+
 
 ### 4/23/2020 v1.0:
- - [ ] Repo Changed to Public
+ - [ ] Repo Changed to Public.
  
  
 # Resources:
