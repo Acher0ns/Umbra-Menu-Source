@@ -32,7 +32,7 @@ This menu is for testing/personal fun. I do not condone the use of this menu in 
 - [ ] Give Lunar Coins
 - [ ] Give or Drop yourself items and equipment
 - [ ] Give/Remove buffs
-- [ ] Always Sprint
+- [ ] Always Sprint 
 - [ ] Clear items in inventory
 - [ ] Stack inventory (does the same thing as the Shrine of Order)
 - [ ] Lobby Management - Kick players from your lobby
