@@ -1,8 +1,6 @@
 # Umbra Menu ![Downloads](https://img.shields.io/github/downloads/Acher0ns/Umbra-Mod-Menu/total)
 ![UmbraInjecter-icon](https://user-images.githubusercontent.com/12210881/87236402-2d05ae80-c3b7-11ea-96d9-61f2136e8607.png)
 
-[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/kamroncole/)
-
 A small collection of hacks and cheats for Risk of Rain 2.
 
 Open to any pull requests.
@@ -15,7 +13,6 @@ and was merged with [Lodington's](https://github.com/Lodington/) unofficial fork
 This menu is for testing/personal fun. I do not condone the use of this menu in competitive modes such as the Prismatic Trials nor do I condone the use of this menu if it harms the experience of other players in any way. Thank you.
 
 
-# Just released Umbra-Injector to auto inject/update Umbra Menu. Check it out [here](https://github.com/Acher0ns/Umbra-Menu-Injector)
 # Features
 
 - [ ] Unlock All
