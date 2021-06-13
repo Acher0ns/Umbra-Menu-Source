@@ -22,9 +22,8 @@ namespace UmbraMenu.Menus
                 SetTitle($"UMBRA\n<color=yellow>DEV</color>");
             }
 
-            if (UmbraMenu.characterCollected)
+            if (UmbraMenu.characterCollected || UmbraMenu.forceFullModMenu)
             {
-
                 Button togglePlayer = new Button(new TogglableButton(this, 1, "PLAYER : OFF", "PLAYER : ON", PlayerButtonAction, PlayerButtonAction));
                 Button toggleMovement = new Button(new TogglableButton(this, 2, "MOVEMENT : OFF", "MOVEMENT : ON", MovementButtonAction, MovementButtonAction));
                 Button toggleItems = new Button(new TogglableButton(this, 3, "ITEMS : OFF", "ITEMS : ON", ItemsButtonAction, ItemsButtonAction));
@@ -51,8 +50,8 @@ namespace UmbraMenu.Menus
                 if (Loader.updateAvailable)
                 {
                     Button text1 = new Button(new TextButton(this, 2, "<color=yellow>Buttons will be availble in game.</color>"));
-                    Button text2 = new Button(new TextButton(this, 3, "<color=#11ccee>Created By Neonix#1337.\n Feel Free to Message me on discord.</color>"));
-                    Button text3 = new Button(new TextButton(this, 4, "<color=#11ccee>Download the latest version from unknowncheats.me</color>"));
+                    Button text2 = new Button(new TextButton(this, 3, "<color=#11ccee>Created By Neonix#1337 and Snow#8008.\n Feel Free to Message me on discord.</color>"));
+                    Button text3 = new Button(new TextButton(this, 4, "<color=#11ccee>Download the latest version from UnknownCheats.\nAcher0ns/Umbra-Mod-Menu</color>"));
                     AddButtons(new List<Button>
                     {
                         text1,
@@ -64,7 +63,7 @@ namespace UmbraMenu.Menus
                 if (Loader.upToDate || Loader.devBuild)
                 {
                     Button text1 = new Button(new TextButton(this, 2, "<color=yellow>Buttons will be availble in game.</color>"));
-                    Button text2 = new Button(new TextButton(this, 3, "<color=#11ccee>Created By Neonix#1337.\n Feel Free to Message me on discord.</color>"));
+                    Button text2 = new Button(new TextButton(this, 3, "<color=#11ccee>Created By Neonix#1337 and Snow#8008.\n Feel Free to Message me on discord.</color>"));
                     Button text3 = new Button(new TextButton(this, 4, "<color=#11ccee>with bug Reports or suggestions.</color>"));
                     AddButtons(new List<Button>
                     {

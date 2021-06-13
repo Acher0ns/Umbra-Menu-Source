@@ -85,6 +85,7 @@ namespace UmbraMenu
                 }
                 catch (NullReferenceException e)
                 {
+                    System.Console.WriteLine(e);
                     continue;
                 }
             }
@@ -110,43 +111,6 @@ namespace UmbraMenu
         }
 
         #region Get Lists
-        public static List<string> GetAllUnlockables()
-        {
-            var unlockableName = new List<string>();
-
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "UmbraMenu.Resources.Unlockables.txt";
-
-            Stream stream = assembly.GetManifestResourceStream(resourceName);
-            StreamReader reader = new StreamReader(stream);
-            while (!reader.EndOfStream)
-            {
-                string line1 = reader.ReadLine();
-                line1 = line1.Replace("UnlockableCatalog.RegisterUnlockable(\"", "");
-                line1 = line1.Replace("\", new UnlockableDef", "");
-                line1 = line1.Replace("true", "");
-                line1 = line1.Replace("});", "");
-                line1 = line1.Replace("=", "");
-                line1 = line1.Replace("\"", "");
-                line1 = line1.Replace("false", "");
-                line1 = line1.Replace(",", "");
-                line1 = line1.Replace("hidden", "");
-                line1 = line1.Replace("{", "");
-                line1 = line1.Replace("nameToken", "");
-                line1 = line1.Replace(" ", "");
-                string[] lineArray = line1.Split(null);
-                foreach (var line in lineArray)
-                {
-                    // TODO: Simplify later
-                    if (line.StartsWith("Logs.") || line.StartsWith("Characters.") || line.StartsWith("Items.") || line.StartsWith("Skills.") || line.StartsWith("Skins.") || line.StartsWith("Shop.") || line.StartsWith("Artifacts.") || line.StartsWith("NewtStatue."))
-                    {
-                        unlockableName.Add(line);
-                    }
-                }
-            }
-            return unlockableName;
-        }
-
         public static List<GameObject> GetBodyPrefabs()
         {
             List<GameObject> bodyPrefabs = new List<GameObject>();
@@ -173,35 +137,23 @@ namespace UmbraMenu
             Color32 equipColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Equipment);
             Color32 lunarColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.LunarItem);
 
-            string[] unreleasedEquipment = { "Count", "None" };
-            var equipList = Enum.GetNames(typeof(EquipmentIndex)).ToList();
-            // string[] unreleasedEquipment = { "SoulJar", "AffixYellow", "AffixGold", "GhostGun", "OrbitalLaser", "Enigma", "LunarPotion", "SoulCorruptor", "Count" };
-            for (int i = 0; i < equipList.Count; i++)
+            foreach (EquipmentIndex equipmentIndex in EquipmentCatalog.allEquipment)
             {
-                string equipmentName = equipList[i];
-                bool unreleasednullEquipment = unreleasedEquipment.Any(equipmentName.Contains);
-                EquipmentIndex equipmentIndex = (EquipmentIndex)Enum.Parse(typeof(EquipmentIndex), equipmentName);
-                if (!unreleasednullEquipment)
+                Color32 currentEquipColor = ColorCatalog.GetColor(EquipmentCatalog.GetEquipmentDef(equipmentIndex).colorIndex);
+                if (currentEquipColor.Equals(equipColor)) // equipment
                 {
-                    Color32 currentEquipColor = ColorCatalog.GetColor(EquipmentCatalog.GetEquipmentDef(equipmentIndex).colorIndex);
-                    if (currentEquipColor.Equals(equipColor)) // equipment
-                    {
-                        equip.Add(equipmentIndex);
-                    }
-                    else if (currentEquipColor.Equals(lunarColor)) // lunar equipment
-                    {
-                        lunar.Add(equipmentIndex);
-                    }
-                    else // other
-                    {
-                        other.Add(equipmentIndex);
-                    }
+                    equip.Add(equipmentIndex);
                 }
-                else if (equipmentName == "None")
+                else if (currentEquipColor.Equals(lunarColor)) // lunar equipment
+                {
+                    lunar.Add(equipmentIndex);
+                }
+                else // other
                 {
                     other.Add(equipmentIndex);
                 }
             }
+            UmbraMenu.unreleasedEquipment = other;
             var result = equipment.Concat(lunar).Concat(equip).Concat(other).ToList();
             return result;
         }
@@ -223,47 +175,62 @@ namespace UmbraMenu
             Color32 tier1Color = ColorCatalog.GetColor(ColorCatalog.ColorIndex.Tier1Item);
             Color32 lunarColor = ColorCatalog.GetColor(ColorCatalog.ColorIndex.LunarItem);
 
-            // List of null items that I remove from the item list. Will change if requested.
-            string[] unreleasedItems = { "Count", "None" };
-            var itemList = Enum.GetNames(typeof(ItemIndex)).ToList();
-            // string[] unreleasedItems = { "AACannon", "PlasmaCore", "LevelBonus", "CooldownOnCrit", "PlantOnHit", "MageAttunement", "BoostHp", "BoostDamage", "CritHeal", "BurnNearby", "CrippleWardOnLevel", "ExtraLifeConsumed", "Ghost", "HealthDecay", "DrizzlePlayerHelper", "MonsoonPlayerHelper", "TempestOnKill", "BoostAttackSpeed", "Count", "None" };
-            for (int i = 0; i < itemList.Count; i++)
+            foreach (ItemIndex itemIndex in ItemCatalog.allItems)
             {
-                string itemName = itemList[i];
-                bool unreleasednullItem = unreleasedItems.Any(itemName.Contains);
-                ItemIndex itemIndex = (ItemIndex)Enum.Parse(typeof(ItemIndex), itemName);
-                if (!unreleasednullItem)
+                Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
+                if (itemColor.Equals(bossColor)) // boss
                 {
-                    Color32 itemColor = ColorCatalog.GetColor(ItemCatalog.GetItemDef(itemIndex).colorIndex);
-                    if (itemColor.Equals(bossColor)) // boss
-                    {
-                        boss.Add(itemIndex);
-                    }
-                    else if (itemColor.Equals(tier3Color)) // tier 3
-                    {
-                        tier3.Add(itemIndex);
-                    }
-                    else if (itemColor.Equals(tier2Color)) // tier 2
-                    {
-                        tier2.Add(itemIndex);
-                    }
-                    else if (itemColor.Equals(tier1Color)) // tier 1
-                    {
-                        tier1.Add(itemIndex);
-                    }
-                    else if (itemColor.Equals(lunarColor)) // lunar
-                    {
-                        lunar.Add(itemIndex);
-                    }
-                    else // Other
-                    {
-                        other.Add(itemIndex);
-                    }
+                    boss.Add(itemIndex);
+                }
+                else if (itemColor.Equals(tier3Color)) // tier 3
+                {
+                    tier3.Add(itemIndex);
+                }
+                else if (itemColor.Equals(tier2Color)) // tier 2
+                {
+                    tier2.Add(itemIndex);
+                }
+                else if (itemColor.Equals(tier1Color)) // tier 1
+                {
+                    tier1.Add(itemIndex);
+                }
+                else if (itemColor.Equals(lunarColor)) // lunar
+                {
+                    lunar.Add(itemIndex);
+                }
+                else // Other
+                {
+                    other.Add(itemIndex);
                 }
             }
+
+            UmbraMenu.bossItems = boss;
+            UmbraMenu.unreleasedItems = other;
             var result = items.Concat(boss).Concat(tier3).Concat(tier2).Concat(tier1).Concat(lunar).Concat(other).ToList();
             return result;
         }
+           
+        public static List<BuffIndex> GetBuffs()
+        {
+            List<BuffIndex> buffs = new List<BuffIndex>();
+
+            List<BuffIndex> elite = new List<BuffIndex>();
+            List<BuffIndex> debuff = new List<BuffIndex>();
+
+            foreach (BuffIndex buffIndex in BuffCatalog.debuffBuffIndices)
+            {
+                debuff.Add(buffIndex);
+
+            }
+            foreach (BuffIndex buffIndex in BuffCatalog.eliteBuffIndices)
+            {
+                elite.Add(buffIndex);
+            }
+            var result = buffs.Concat(elite).Concat(debuff).ToList();
+            return result;                      
+        }
+
+
 
         public static List<SpawnCard> GetSpawnCards()
         {
@@ -271,7 +238,7 @@ namespace UmbraMenu
             return spawnCards;
         }
 
-        public static List<HurtBox> GetHurtBoxes()
+        public static List<HurtBox> GetHurtBoxes()                              
         {
             string[] allowedBoxes = { "Golem", "Jellyfish", "Wisp", "Beetle", "Lemurian", "Imp", "HermitCrab", "ClayBruiser", "Bell", "BeetleGuard", "MiniMushroom", "Bison", "GreaterWisp", "LemurianBruiser", "RoboBallMini", "Vulture",  /* BOSSES */ "BeetleQueen2", "ClayDunestrider", "Titan", "TitanGold", "TitanBlackBeach", "Grovetender", "Gravekeeper", "Mithrix", "Aurelionite", "Vagrant", "MagmaWorm", "ImpBoss", "ElectricWorm", "RoboBallBoss", "Nullifier", "Parent", "Scav", "ScavLunar1", "ClayBoss", "LunarGolem", "LunarWisp", "Brother", "BrotherHurt" };
             var localUser = LocalUserManager.GetFirstLocalUser();
@@ -339,7 +306,7 @@ namespace UmbraMenu
         public static void CloseOpenMenus()
         {
             List<Menu> openMenus = GetMenusOpen();
-            for(int i = 0; i < openMenus.Count; i++)
+            for (int i = 0; i < openMenus.Count; i++)
             {
                 openMenus[i].SetEnabled(false);
             }
@@ -508,7 +475,7 @@ namespace UmbraMenu
                 outputFile.WriteLine(@"#         ~~                       \/____/                  ~~                       \|___|                   \/____/                          \/____/                  \/____/                  \/____/                  ~~              #");
                 outputFile.WriteLine(@"###########################################################################################################################################################################################################################################");
                 outputFile.WriteLine(@"# This is the settings file for the Risk Of Rain 2 Umbra Mod Menu.");
-                outputFile.WriteLine(@"# Created by https://www.unknowncheats.me/forum/members/3169600.html");
+                outputFile.WriteLine(@"# Created by https://www.github.com/Acher0ns");
                 outputFile.WriteLine(@"# If you need any help, add me on discord! Neonix#1337");
                 outputFile.WriteLine(@"###########################################################################################################################################################################################################################################");
                 outputFile.WriteLine($"Width: {UmbraMenu.Width}: # Menu Width Size (Any Number)");
@@ -572,7 +539,7 @@ namespace UmbraMenu
                 outputFile.WriteLine(@"#         ~~                       \/____/                  ~~                       \|___|                   \/____/                          \/____/                  \/____/                  \/____/                  ~~              #");
                 outputFile.WriteLine(@"###########################################################################################################################################################################################################################################");
                 outputFile.WriteLine(@"# This is the settings file for the Risk Of Rain 2 Umbra Mod Menu.");
-                outputFile.WriteLine(@"# Created by https://www.unknowncheats.me/forum/members/3169600.html");
+                outputFile.WriteLine(@"# Created by https://www.github.com/Acher0ns");
                 outputFile.WriteLine(@"# If you need any help, add me on discord! Neonix#1337");
                 outputFile.WriteLine(@"###########################################################################################################################################################################################################################################");
                 outputFile.WriteLine($"Width: {350}: # Menu Width Size (Any Number)");

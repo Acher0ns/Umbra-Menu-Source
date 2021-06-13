@@ -154,11 +154,10 @@ namespace UmbraMenu.Menus
 
         public static void RemoveAllBuffs()
         {
-            foreach (string buffName in Enum.GetNames(typeof(BuffIndex)))
+            foreach (BuffIndex buffIndex in UmbraMenu.buffs)
             {
                 try
                 {
-                    BuffIndex buffIndex = (BuffIndex)Enum.Parse(typeof(BuffIndex), buffName);
                     while (UmbraMenu.LocalPlayerBody.HasBuff(buffIndex))
                     {
                         UmbraMenu.LocalPlayerBody.RemoveBuff(buffIndex);
@@ -246,7 +245,7 @@ namespace UmbraMenu.Menus
                     {
                         // works
                         // Buff
-                        UmbraMenu.LocalPlayerBody.AddBuff(BuffIndex.Intangible);
+                        UmbraMenu.LocalPlayerBody.AddBuff(BuffCatalog.FindBuffIndex("Intangible"));
                         break;
                     }
 
@@ -271,23 +270,23 @@ namespace UmbraMenu.Menus
                         // works
                         // Revive
                         UmbraMenu.LocalHealth.SetField<bool>("wasAlive", false);
-                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemIndex.ExtraLife);
-                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemIndex.ExtraLifeConsumed);
+                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
+                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
                         if (UmbraMenu.LocalHealth.health < 1)
                         {
                             if (itemELCount == 0)
                             {
-                                ItemList.GiveItem(ItemIndex.ExtraLife);
+                                ItemList.GiveItem(ItemCatalog.FindItemIndex("ExtraLife"));
                                 UmbraMenu.LocalHealth.SetField<bool>("wasAlive", true);
                             }
                         }
                         if (itemELCCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemIndex.ExtraLifeConsumed, itemELCCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
                         }
                         if (itemELCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemIndex.ExtraLifeConsumed, itemELCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
                         }
                         break;
                     }
@@ -331,15 +330,15 @@ namespace UmbraMenu.Menus
                             UmbraMenu.LocalHealth.health = 1;
                         }
                         UmbraMenu.LocalHealth.SetField<bool>("wasAlive", true);
-                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemIndex.ExtraLife);
-                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemIndex.ExtraLifeConsumed);
+                        int itemELCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLife"));
+                        int itemELCCount = UmbraMenu.LocalPlayerInv.GetItemCount(ItemCatalog.FindItemIndex("ExtraLifeConsumed"));
                         if (itemELCCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemIndex.ExtraLifeConsumed, itemELCCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCCount);
                         }
                         if (itemELCount > 0)
                         {
-                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemIndex.ExtraLifeConsumed, itemELCount);
+                            UmbraMenu.LocalPlayerInv.RemoveItem(ItemCatalog.FindItemIndex("ExtraLifeConsumed"), itemELCount);
                         }
                         break;
                     }
@@ -351,15 +350,14 @@ namespace UmbraMenu.Menus
 
         public static void UnlockAll()
         {
-            //Goes through resource file containing all unlockables... Easily updatable, just paste "RoR2.UnlockCatalog" and GetAllUnlockable does the rest.
             //This is needed to unlock logs
-            foreach (var unlockableName in UmbraMenu.unlockableNames)
+            var unlockables = UmbraMenu.unlockables;
+            foreach (var unlockable in unlockables)
             {
-                var unlockableDef = UnlockableCatalog.GetUnlockableDef(unlockableName);
                 NetworkUser networkUser = Util.LookUpBodyNetworkUser(UmbraMenu.LocalPlayerBody);
                 if (networkUser)
                 {
-                    networkUser.ServerHandleUnlock(unlockableDef);
+                    networkUser.ServerHandleUnlock(unlockable.Value);
                 }
             }
 
@@ -376,28 +374,30 @@ namespace UmbraMenu.Menus
             {
                 if (profile.statSheet.GetStatValueDouble(RoR2.Stats.PerBodyStatDef.totalTimeAlive, survivor.bodyPrefab.name) == 0.0)
                     profile.statSheet.SetStatValueFromString(RoR2.Stats.PerBodyStatDef.totalTimeAlive.FindStatDef(survivor.bodyPrefab.name), "0.1");
+                if (profile.statSheet.GetStatValueULong(RoR2.Stats.PerBodyStatDef.totalWins, survivor.bodyPrefab.name) == 0L)
+                    profile.statSheet.SetStatValueFromString(RoR2.Stats.PerBodyStatDef.totalWins.FindStatDef(survivor.bodyPrefab.name), "1");
+                if (profile.statSheet.GetStatValueULong(RoR2.Stats.PerBodyStatDef.timesPicked, survivor.bodyPrefab.name) == 0L)
+                    profile.statSheet.SetStatValueFromString(RoR2.Stats.PerBodyStatDef.timesPicked.FindStatDef(survivor.bodyPrefab.name), "1");
             }
 
             //All items and equipments
-            foreach (string itemName in Enum.GetNames(typeof(ItemIndex)))
+            foreach (ItemIndex itemIndex in ItemCatalog.allItems)
             {
-                ItemIndex itemIndex = (ItemIndex)Enum.Parse(typeof(ItemIndex), itemName);
                 profile.DiscoverPickup(PickupCatalog.FindPickupIndex(itemIndex));
             }
 
-            foreach (string equipmentName in Enum.GetNames(typeof(EquipmentIndex)))
+            foreach (EquipmentIndex equipmentIndex in EquipmentCatalog.allEquipment)
             {
-                EquipmentIndex equipmentIndex = (EquipmentIndex)Enum.Parse(typeof(EquipmentIndex), equipmentName);
                 profile.DiscoverPickup(PickupCatalog.FindPickupIndex(equipmentIndex));
             }
 
             //All Eclipse unlockables as well
-            StringBuilder stringBuilder = StringBuilderPool.RentStringBuilder();
+            StringBuilder stringBuilder = HG.StringBuilderPool.RentStringBuilder();
             foreach (SurvivorDef survivorDef in SurvivorCatalog.allSurvivorDefs)
             {
                 for (int i = 2; i < 9; i++)
                 {
-                    stringBuilder.Clear().Append("Eclipse.").Append(survivorDef.name).Append(".").AppendInt(i, 0U, uint.MaxValue);
+                    stringBuilder.Clear().Append("Eclipse.").Append(survivorDef.cachedName).Append(".").AppendInt(i, 0U, uint.MaxValue);
                     UnlockableDef unlockableDef = UnlockableCatalog.GetUnlockableDef(stringBuilder.ToString());
                     NetworkUser networkUser = Util.LookUpBodyNetworkUser(UmbraMenu.LocalPlayerBody);
                     if (networkUser)
@@ -405,7 +405,6 @@ namespace UmbraMenu.Menus
                         networkUser.ServerHandleUnlock(unlockableDef);
                     }
                 }
-
             }
         }
 

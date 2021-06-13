@@ -12,31 +12,35 @@ namespace UmbraMenu
     {
         public const string
             NAME = "U M B R A",
-            VERSION = "2.0.0";
+            VERSION = "2.0.2";
 
         public static string SETTINGSPATH = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"UmbraMenu/settings-{VERSION}.ini");
 
         #region Player Variables
         public static CharacterMaster LocalPlayer;
-        public static CharacterBody LocalPlayerBody;
-        public static Inventory LocalPlayerInv;
+        public static CharacterBody   LocalPlayerBody;
+        public static Inventory       LocalPlayerInv;
         public static HealthComponent LocalHealth;
-        public static SkillLocator LocalSkills;
-        public static NetworkUser LocalNetworkUser;
-        public static CharacterMotor LocalMotor;
+        public static SkillLocator    LocalSkills;
+        public static NetworkUser     LocalNetworkUser;
+        public static CharacterMotor  LocalMotor;
         #endregion
 
         #region Init Lists
-        public static List<string> unlockableNames = Utility.GetAllUnlockables();
+        public static Dictionary<String, UnlockableDef> unlockables = typeof(UnlockableCatalog).GetField<Dictionary<String, UnlockableDef>>("nameToDefTable");
         public static List<GameObject> bodyPrefabs = Utility.GetBodyPrefabs();
         public static List<EquipmentIndex> equipment = Utility.GetEquipment();
         public static List<ItemIndex> items = Utility.GetItems();
+        public static List<BuffIndex> buffs = Utility.GetBuffs();
         public static List<SpawnCard> spawnCards = Utility.GetSpawnCards();
+        public static List<ItemIndex> bossItems;
+        public static List<ItemIndex> unreleasedItems;
+        public static List<EquipmentIndex> unreleasedEquipment;
         #endregion
 
         #region Misc Variabled used in some features
         public static int previousMenuOpen;
-        public static bool characterCollected, navigationToggle, devDoOnce = true, lowResolutionMonitor, chatOpen, msgSent = true, scrolled, listenForKeybind;
+        public static bool characterCollected, navigationToggle, devDoOnce = true, devMode, forceFullModMenu, lowResolutionMonitor, chatOpen, msgSent = true, scrolled, listenForKeybind;
         public static Scene currentScene;
         #endregion
 
@@ -154,11 +158,11 @@ namespace UmbraMenu
             #region Watermark
             if (Loader.updateAvailable)
             {
-                GUI.Label(new Rect(Screen.width - 210, 1f, 100, 50f), $"Umbra Menu (v{VERSION}) <color=grey>-</color> <color=yellow>Lastest (v{Loader.latestVersion})</color>", Styles.WatermarkStyle);
+                GUI.Label(new Rect(Screen.width - 250, 1f, 100, 50f), $"Umbra Menu (v{VERSION}) <color=grey>-</color> <color=yellow>Lastest (v{Loader.latestVersion})</color>", Styles.WatermarkStyle);
             }
             else if (Loader.upToDate)
             {
-                GUI.Label(new Rect(Screen.width - 210, 1f, 100, 50f), $"Umbra Menu (v{VERSION})", Styles.WatermarkStyle);
+                GUI.Label(new Rect(Screen.width - 140, 1f, 100, 50f), $"Umbra Menu (v{VERSION})", Styles.WatermarkStyle);
             }
             else if (Loader.devBuild)
             {
@@ -247,6 +251,7 @@ namespace UmbraMenu
             SetKeybindRoutine();
             UpdateMainButtonsRoutine();
             UpdateKeybindButtonRoutine();
+            ForceFullMenuRoutine();
         }
 
         public void FixedUpdate()
@@ -310,37 +315,35 @@ namespace UmbraMenu
         {
             try
             {
+
                 if (InGameCheck())
                 {
                     LocalNetworkUser = null;
 
-                    for (int i = 0; i < NetworkUser.readOnlyInstancesList.Count; i++)
+                    foreach (NetworkUser readOnlyInstance in NetworkUser.readOnlyInstancesList)   
                     {
-                        NetworkUser readOnlyInstance = NetworkUser.readOnlyInstancesList[i];
                         if (readOnlyInstance.isLocalPlayer)
                         {
                             LocalNetworkUser = readOnlyInstance;
                             LocalPlayer = LocalNetworkUser.master;
-                            LocalPlayerInv = LocalPlayer.GetComponent<Inventory>();
-                            LocalHealth = LocalPlayer.GetBody().GetComponent<HealthComponent>();
-                            LocalSkills = LocalPlayer.GetBody().GetComponent<SkillLocator>();
-                            LocalPlayerBody = LocalPlayer.GetBody().GetComponent<CharacterBody>();
-                            if (LocalHealth.alive) characterCollected = true;
-                            else characterCollected = false;
-                            if (LocalPlayer.isActiveAndEnabled) characterCollected = true;
-                            else characterCollected = false;
-                            if (LocalPlayerBody.isActiveAndEnabled) characterCollected = true;
-                            else characterCollected = false;
-                        }
-                        else
-                        {
-                            characterCollected = false;
+                            LocalPlayerInv = LocalPlayer.GetComponent<Inventory>(); //gets player inventory
+                            LocalHealth = LocalPlayer.GetBody().GetComponent<HealthComponent>(); //gets players local health numbers
+                            LocalSkills = LocalPlayer.GetBody().GetComponent<SkillLocator>(); //gets current for local character skills
+                            LocalPlayerBody = LocalPlayer.GetBody().GetComponent<CharacterBody>(); //gets all stats for local character
+                            LocalMotor = LocalPlayer.GetBody().GetComponent<CharacterMotor>();
+                            bool flag = !LocalPlayer.IsDeadAndOutOfLivesServer();
+
+						    if (flag)
+						    {
+							    characterCollected = true;
+							    //Main.enableRespawnButton = true;
+						    }
+						    else
+						    {
+							    characterCollected = false;
+						    }
                         }
                     }
-                }
-                else
-                {
-                    characterCollected = false;
                 }
             }
             catch (Exception e)
@@ -386,7 +389,7 @@ namespace UmbraMenu
             {
                 if (characterCollected)
                 {
-                    if (devDoOnce)
+                    if (devDoOnce && devMode)
                     {
                         Menus.Player.GodToggle = true;
                         Utility.FindButtonById(1, 9).SetEnabled(true);
@@ -667,6 +670,14 @@ namespace UmbraMenu
                 }
             }
         }
+
+        private void ForceFullMenuRoutine()
+        {
+            if (forceFullModMenu == true)
+            {
+                characterCollected = true;
+            }
+        }
         #endregion
 
         #region Inputs
@@ -812,15 +823,22 @@ namespace UmbraMenu
 
         private void Keybinds()
         {
+            #region Dev Mode Keybinds
+            if (Input.GetKeyDown(KeyCode.F2))
+            {
+                devMode = !devMode;
+            }
+
+            if (Input.GetKeyDown(KeyCode.F7))
+            {
+                forceFullModMenu = !forceFullModMenu;
+            }
+            #endregion
+
             #region Main Menu Keybind
             if (Input.GetKeyDown(keybindDict["MAIN MENU"].KeyCode))
             {
                 if (InGameCheck())
-                {
-                    Utility.FindButtonById(0, 8).SetEnabled(false);
-                }
-
-                if (mainMenu.IsEnabled() && navigationToggle && AllowNavigation)
                 {
                     Utility.CloseOpenMenus();
                 }
@@ -832,7 +850,7 @@ namespace UmbraMenu
             if (!chatOpen && InGameCheck())
             {
                 #region Player Menu Keybinds
-                if (Input.GetKeyDown(keybindDict["PLAYER MENU"].KeyCode ))
+                if (Input.GetKeyDown(keybindDict["PLAYER MENU"].KeyCode))
                 {
                     playerMenu.ToggleMenu();
                     if (navigationToggle && AllowNavigation)

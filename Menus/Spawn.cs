@@ -68,7 +68,7 @@ namespace UmbraMenu.Menus
 
                  changeMinDistance = new Button(new MulButton(this, 1, $"MIN DISTANCE : {MinDistance}", DoNothing, IncreaseMinDistance, DecreaseMinDistance));
                  changeMaxDistance = new Button(new MulButton(this, 2, $"MAX DISTANCE : {MaxDistance}", DoNothing, IncreaseMaxDistance, DecreaseMaxDistance));
-                 changeTeamIndex = new Button(new MulButton(this, 3, $"T E A M : {team[TeamIndexInt]}", DoNothing, IncreaseTeamIndex, DecreaseTeamIndex));
+                 changeTeamIndex = new Button(new MulButton(this, 3, $"TEAM : {team[TeamIndexInt]}", DoNothing, IncreaseTeamIndex, DecreaseTeamIndex));
                  toggleSpawnListMenu = new Button(new TogglableButton(this, 4, "SPAWN LIST : OFF", "SPAWN LIST : ON", ToggleSpawnListMenu, ToggleSpawnListMenu));
                  killAll = new Button(new NormalButton(this, 5, "KILL ALL", KillAllMobs));
                  destroyInteractables = new Button(new NormalButton(this, 6, "DESTROY INTERACTABLES", DestroySpawnedInteractables));
@@ -175,13 +175,22 @@ namespace UmbraMenu.Menus
                 maxAngleFilter = float.MaxValue
             };
 
+            List<string> survivor_names = new List<string>();
+            foreach (SurvivorDef def in SurvivorCatalog.allSurvivorDefs)
+            {
+                survivor_names.Add(def.cachedName);
+            }
+
+
             bullseyeSearch.RefreshCandidates();
             var hurtBoxList = bullseyeSearch.GetResults();
             foreach (var hurtbox in hurtBoxList)
             {
+
                 var mob = HurtBox.FindEntityObject(hurtbox);
                 string mobName = mob.name.Replace("Body(Clone)", "");
-                if (Enum.GetNames(typeof(SurvivorIndex)).Contains(mobName))
+  
+                if (survivor_names.Contains(mobName))
                 {
                     continue;
                 }
